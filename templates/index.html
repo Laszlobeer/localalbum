@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Minimalist Image Host</title>
+    <style>
+        body {
+            background: #0f0f0f;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 2rem;
+        }
+        h1 {
+            font-weight: 400;
+            color: #ffffff;
+            margin-bottom: 2rem;
+        }
+        a.upload-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #3f51b5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        a.upload-link:hover {
+            text-decoration: underline;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+        .image-card {
+            background: #1a1a1a;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .image-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(63, 81, 181, 0.6);
+        }
+        .image-card img {
+            width: 100%;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+        .image-card:hover img {
+            transform: scale(1.1);
+        }
+        .tags {
+            font-size: 0.85rem;
+            color: #b0b0b0;
+        }
+    </style>
+</head>
+<body>
+    <h1>📸 Local Image Host</h1>
+    <a href="{{ url_for('upload_file') }}" class="upload-link">➕ Upload New Image</a>
+
+    <div class="gallery">
+        {% for image in images %}
+            <div class="image-card">
+                <img src="{{ url_for('uploaded_file', filename=image) }}" alt="{{ image }}">
+                <div class="tags">Tags: {{ tags.get(image, [])|join(', ') }}</div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
