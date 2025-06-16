@@ -51,7 +51,7 @@ minimalist_image_host/
 2. 📦 Install dependencies:
 
    ```bash
-   pip install flask
+   pip install flask 
    ```
 3. ▶️ Run the app:
 
