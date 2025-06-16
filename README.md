@@ -13,6 +13,16 @@ Welcome to **Local Image Host** — a clean, modern, and minimalist image galler
 * 🏷️ **Tagging Support**: Add, store, and display custom tags per image.
 * 💾 **Local File Storage**: Images are saved to your disk — no cloud required.
 
+
+
+## Screenshots
+
+### main page
+![First Screenshot](images/Screenshot%20from%202025-06-16%2015-59-47.png)
+
+### upload page
+![Second Screenshot](images/Screenshot%20from%202025-06-16%2015-59-34.png)
+
 ## 📁 Project Structure
 
 ```
