@@ -18,11 +18,11 @@ Welcome to **Local Image Host** — a clean, modern, and minimalist image galler
 ## Screenshots
 
 ### main page
-![First Screenshot](images/Screenshot%20from%202025-06-16%2015-59-47.png)
 
-### upload page
 ![Second Screenshot](images/Screenshot%20from%202025-06-16%2015-59-34.png)
 
+### upload page
+![First Screenshot](images/Screenshot%20from%202025-06-16%2015-59-47.png)
 ## 📁 Project Structure
 
 ```
