@@ -2,6 +2,9 @@
 
 Welcome to **Local Image Host** — a clean, modern, and minimalist image gallery built with Flask. It's perfect for self-hosting your personal image album locally with tags and a dark aesthetic.
 
+
+
+
 ## ✨ Features
 
 * 🌌 **Dark Mode**: Sleek, modern UI with a stylish dark theme.
