@@ -17,14 +17,9 @@ Welcome to **Local Image Host** — a clean, modern, and minimalist image galler
 
 ## Screenshots
 
-## Screenshots
+## Preview
+[![Watch the video](https://img.youtube.com/vi/DlvrjOVjZ1Y/0.jpg)](https://youtu.be/DlvrjOVjZ1Y)
 
-### First Image
-
-![Second Screenshot](images/Screenshot%20from%202025-06-16%2015-59-34.png)
-
-### Second Image
-![First Screenshot](images/Screenshot%20from%202025-06-16%2015-59-47.png)
 
 
 ## 📁 Project Structure
