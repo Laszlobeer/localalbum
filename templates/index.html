@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PixelHost - Minimalist Image Gallery</title>
+  <title>PixelHost - Modern Image Gallery</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -12,49 +12,211 @@
     <header>
       <div class="header-content">
         <h1><i class="fas fa-images"></i>PixelHost Gallery</h1>
-        <p class="subtitle">Unlimited image hosting</p>
+        <p class="subtitle">Modern image hosting with themes</p>
       </div>
+      
+      <div class="theme-switcher">
+        <button class="theme-btn active" data-theme="dark" title="Dark Theme"><i class="fas fa-moon"></i></button>
+        <button class="theme-btn" data-theme="light" title="Light Theme"><i class="fas fa-sun"></i></button>
+        <button class="theme-btn" data-theme="ocean" title="Ocean Theme"><i class="fas fa-water"></i></button>
+        <button class="theme-btn" data-theme="forest" title="Forest Theme"><i class="fas fa-tree"></i></button>
+        <button class="theme-btn" data-theme="sunset" title="Sunset Theme"><i class="fas fa-sunset"></i></button>
+      </div>
+      
       <a href="{{ url_for('upload_file') }}" class="upload-link">
         <i class="fas fa-plus"></i> Upload New
       </a>
     </header>
-
+    
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">
+              <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+              {{ message }}
+              <button class="flash-close"><i class="fas fa-times"></i></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    <div class="stats-card">
+      <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-images"></i></div>
+        <div class="stat-value">{{ images|length }}</div>
+        <div class="stat-label">Total Images</div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-tags"></i></div>
+        <div class="stat-value">{{ tag_count }}</div>
+        <div class="stat-label">Tags Used</div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-hdd"></i></div>
+        <div class="stat-value">{{ storage_used }}</div>
+        <div class="stat-label">Storage Used</div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+        <div class="stat-value">{{ newest_upload }}</div>
+        <div class="stat-label">Newest Upload</div>
+      </div>
+    </div>
+    
     <div class="gallery-header">
-      <div class="gallery-title">Your Images</div>
-      <div class="image-count">{{ images|length }} image{{ '' if images|length == 1 else 's' }}</div>
+      <div class="gallery-title">Featured Images</div>
+      <div class="image-count">{{ images|length }} images</div>
     </div>
 
     <div class="gallery">
       {% if images %}
         {% for image in images %}
-          <div class="image-card">
-            <div class="image-container">
-              <img src="{{ url_for('uploaded_file', filename=image) }}" alt="{{ image }}">
-              <div class="image-overlay">
-                <div class="image-name">{{ image }}</div>
-              </div>
-            </div>
-            <div class="image-meta">
-              <div class="tags">
-                {% if tags.get(image) %}
-                  {% for tag in tags.get(image) %}
-                    <span class="tag">{{ tag }}</span>
-                  {% endfor %}
-                {% else %}
-                  <span class="no-tags">No tags</span>
-                {% endif %}
-              </div>
+        <div class="image-card">
+          <div class="image-container">
+            <img src="{{ url_for('uploaded_file', filename=image) }}" alt="{{ image }}">
+            <div class="image-overlay">
+              <div class="image-name">{{ image }}</div>
+              <!-- Delete button form -->
+              <form action="{{ url_for('delete_image') }}" method="POST" class="delete-form">
+                <input type="hidden" name="filename" value="{{ image }}">
+                <button type="button" class="delete-btn" onclick="confirmDelete(this)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
             </div>
           </div>
+          <div class="image-meta">
+            <div class="tags">
+              {% if tags.get(image) %}
+                {% for tag in tags[image] %}
+                <span class="tag">{{ tag }}</span>
+                {% endfor %}
+              {% else %}
+                <span class="no-tags">No tags</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
         {% endfor %}
       {% else %}
         <div class="empty-gallery">
-          <i class="fas fa-cloud-arrow-up"></i>
+          <i class="fas fa-cloud-upload-alt"></i>
           <h2>Your gallery is empty</h2>
           <p>Upload your first image to get started</p>
+          <a href="{{ url_for('upload_file') }}" class="btn">
+            <i class="fas fa-upload"></i> Upload Image
+          </a>
         </div>
       {% endif %}
     </div>
   </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const themeBtns = document.querySelectorAll('.theme-btn');
+      const root = document.documentElement;
+      
+      // Function to set theme
+      function setTheme(themeName) {
+        // Remove active class from all buttons
+        themeBtns.forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to selected button
+        document.querySelector(`.theme-btn[data-theme="${themeName}"]`).classList.add('active');
+        
+        // Set CSS variables based on theme
+        switch(themeName) {
+          case 'dark':
+            root.style.setProperty('--theme-primary', '#7c4dff');
+            root.style.setProperty('--theme-secondary', '#5e35b1');
+            root.style.setProperty('--theme-background', '#0a0a0a');
+            root.style.setProperty('--theme-card', '#171717');
+            root.style.setProperty('--theme-text', '#f5f5f5');
+            root.style.setProperty('--theme-text-secondary', '#b3b3b3');
+            break;
+          case 'light':
+            root.style.setProperty('--theme-primary', '#6200ea');
+            root.style.setProperty('--theme-secondary', '#3700b3');
+            root.style.setProperty('--theme-background', '#f5f5f5');
+            root.style.setProperty('--theme-card', '#ffffff');
+            root.style.setProperty('--theme-text', '#212121');
+            root.style.setProperty('--theme-text-secondary', '#666666');
+            break;
+          case 'ocean':
+            root.style.setProperty('--theme-primary', '#2196F3');
+            root.style.setProperty('--theme-secondary', '#0D47A1');
+            root.style.setProperty('--theme-background', '#001f3f');
+            root.style.setProperty('--theme-card', '#003366');
+            root.style.setProperty('--theme-text', '#e0f7fa');
+            root.style.setProperty('--theme-text-secondary', '#81d4fa');
+            break;
+          case 'forest':
+            root.style.setProperty('--theme-primary', '#4CAF50');
+            root.style.setProperty('--theme-secondary', '#1B5E20');
+            root.style.setProperty('--theme-background', '#0d1f0c');
+            root.style.setProperty('--theme-card', '#1b3c1a');
+            root.style.setProperty('--theme-text', '#e8f5e9');
+            root.style.setProperty('--theme-text-secondary', '#a5d6a7');
+            break;
+          case 'sunset':
+            root.style.setProperty('--theme-primary', '#FF9800');
+            root.style.setProperty('--theme-secondary', '#E65100');
+            root.style.setProperty('--theme-background', '#2c1a1d');
+            root.style.setProperty('--theme-card', '#4a2b2f');
+            root.style.setProperty('--theme-text', '#fff3e0');
+            root.style.setProperty('--theme-text-secondary', '#ffcc80');
+            break;
+        }
+        
+        // Save theme to localStorage
+        localStorage.setItem('theme', themeName);
+      }
+      
+      // Event listeners for theme buttons
+      themeBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const theme = this.getAttribute('data-theme');
+          setTheme(theme);
+        });
+      });
+      
+      // Check for saved theme or set default
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      setTheme(savedTheme);
+      
+      // Add hover effect to image cards
+      const imageCards = document.querySelectorAll('.image-card');
+      imageCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+          this.style.zIndex = '10';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+          this.style.zIndex = '1';
+        });
+      });
+      
+      // Close flash messages
+      const flashCloseButtons = document.querySelectorAll('.flash-close');
+      flashCloseButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          this.closest('.flash').remove();
+        });
+      });
+    });
+    
+    // Delete confirmation function
+    function confirmDelete(button) {
+      if (confirm('Are you sure you want to delete this image?')) {
+        button.closest('form').submit();
+      }
+    }
+  </script>
 </body>
 </html>
